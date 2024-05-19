@@ -4,53 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class HomePageApp extends StatelessWidget {
   HomePageApp({super.key});
   final nombreController = TextEditingController();
+  
   final fechaController = TextEditingController();
   final horaController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bienvenido a nuestra estética'),
-        //centrar el titulo 
-        centerTitle: true,
-        titleTextStyle: const TextStyle(color: Colors.white),
-        backgroundColor: const Color(0xffB4584B),
-      ),
       body: Column(
         children: <Widget>[
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text(
-              'Tu próxima cita',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-          ),
-          FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance
-                .collection('citas')
-                .orderBy('Fecha', descending: false)
-                .limit(1)
-                .get()
-                .then((snapshot) => snapshot.docs.first),
-            builder: (BuildContext context,
-                AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.hasError) {
-                return const Text("Algo salió mal");
-              }
 
-              if (snapshot.connectionState == ConnectionState.done) {
-                Map<String, dynamic> data =
-                    snapshot.data!.data() as Map<String, dynamic>;
-                return ListTile(
-                  title: Text('Cita con ${data['Nombre']}'),
-                  subtitle:
-                      Text('Fecha: ${data['Fecha']} Hora: ${data['Hora']}'),
-                );
-              }
-
-              return const CircularProgressIndicator();
-            },
-          ),
           const Padding(
             padding: EdgeInsets.all(8.0),
             child: Text(
@@ -70,8 +32,9 @@ class HomePageApp extends StatelessWidget {
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('citas')
-                    .orderBy('Fecha', descending: false)
+                    .orderBy('Hora', descending: false)
                     .snapshots(),
+                
                 builder: (BuildContext context,
                     AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasError) {
